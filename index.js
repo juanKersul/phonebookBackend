@@ -1,8 +1,15 @@
 const express = require("express");
-const morgan = require("morgan")
+const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 app.use(express.json());
-app.use(morgan('tiny'))
+morgan.token("body", (req, res) => {
+  return JSON.stringify(req.body);
+});
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
+app.use(cors());
 
 let persons = [
   {
@@ -26,10 +33,11 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 app.get("/api/persons", (request, response) => {
   return response.json(persons);
 });
@@ -58,14 +66,11 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({
       error: "content missing",
     });
-  
-  }
-  else if (persons.some((person)=>person.name === body.name)){
+  } else if (persons.some((person) => person.name === body.name)) {
     return response.status(400).json({
-      error:"the name already exist"
-    })
-  } 
-  else {
+      error: "the name already exist",
+    });
+  } else {
     const person = {
       id: Math.ceil(Math.random() * 50000),
       name: body.name,
