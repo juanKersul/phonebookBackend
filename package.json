@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build:ui": "rm -rf dist && cd ../phonebook && npm run build && cp -r dist ../phonebookBackend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+
   },
   "author": "juan kersul",
   "license": "MIT",
